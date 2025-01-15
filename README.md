@@ -4,6 +4,28 @@
   <img align="center" src="https://api.visitorbadge.io/api/visitors?path=https://github.com/Ralex91/Rahoot/edit/main/README.md&countColor=%2337d67a">
 </p>
 
+## TODO:
+
+- [ ] Make the system work with esp-32 clients
+  - [ ] Remove the PIN system
+  - [ ] Capture and document the flow of Websocket stuff, and see what we specifically need to re-create
+- [ ] ESP-32 Client Software
+  - [ ] When it turns on, it tries to connect to the web server
+    - [ ] It then creates/signs in to with a predefined name
+    - [ ] Every ESP32 has a predefined name
+      - [ ] We should put these names as labels on bags, and have people scramble at the beginning to pick the names they like the most
+  - [ ] When a button is pushed, submit a websocket instance with a player id.
+  - [ ] We need to submit an event like this from the esp32:
+    - ```
+      socket.on("player:selectedAnswer", (answerKey) =>
+        Player.selectedAnswer(gameState, io, socket, answerKey),
+      )
+      ```
+  - [ ] We need to emit something like this, where `answer` is a number '0-3'
+    - ```
+        socket.emit("player:selectedAnswer", answer)
+      ```
+
 ## 🧩 What is this project?
 
 This is a fork of Rahoot, intended for use with ESP32 clients.
