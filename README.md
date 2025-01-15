@@ -6,6 +6,8 @@
 
 ## 🧩 What is this project?
 
+This is a fork of Rahoot, intended for use with ESP32 clients.
+
 Rahoot is a straightforward and open-source clone of the Kahoot! platform, allowing users to host it on their own server for smaller events.
 
 > ⚠️ This project is still under development, please report any bugs or suggestions in the [issues](https://github.com/Ralex91/Rahoot/issues)
