@@ -13,7 +13,7 @@ export default function App({ Component, pageProps }) {
     <>
       <Head>
         <link rel="shortcut icon" href="/icon.svg" />
-        <title>Rahoot !</title>
+        <title>Norse IoT - Rahoot</title>
       </Head>
       <SocketContextProvider>
         <PlayerContextProvider>

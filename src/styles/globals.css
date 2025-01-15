@@ -6,9 +6,27 @@
   box-shadow: rgba(0, 0, 0, 0.25) 0px -4px inset;
 }
 
+.bg-secondary {
+  background-color: #1E2129 !important;
+}
+
+.bg-primary\/15 {
+  background-color: #967100 !important;
+  border: 10px solid #745700 I !important;
+}
+
+.bg-primary {
+  background-color: #ffc107 !important;
+  border: 10px solid #ffc107 I !important;
+}
+
 .btn-shadow span {
   display: block;
   transform: translateY(-2px);
+}
+
+.bg-orange-600 {
+  background-color: rgb(234 88 12 / 1);
 }
 
 .btn-shadow:hover {
