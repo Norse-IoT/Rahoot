@@ -7,7 +7,7 @@
 ## TODO:
 
 - [ ] Make the system work with esp-32 clients
-  - [ ] Remove the PIN system
+  - [x] ~~Remove~~ Hardcode the PIN system
   - [ ] Capture and document the flow of Websocket stuff, and see what we specifically need to re-create
 - [ ] ESP-32 Client Software
   - [ ] When it turns on, it tries to connect to the web server
