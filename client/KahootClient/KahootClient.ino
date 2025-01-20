@@ -32,7 +32,6 @@ void setup() {
 
   String ip = WiFi.localIP().toString();
   USE_SERIAL.printf("[SETUP] WiFi Connected %s\n", ip.c_str());
-  game.setGameStatus(WAITING_TO_PLAY);
   game.start();
 }
 

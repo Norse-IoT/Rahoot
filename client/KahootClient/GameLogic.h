@@ -9,10 +9,18 @@
 
 enum GameStatus {
   DISCONNECTED,
-  WAITING_TO_PLAY,
+  WAITING_FOR_ROOM,
+  WAITING_TO_START,
   PLAYING,
 };
 
+
+/**
+ * GameLogic is structured like a state machine.
+ * The states are primarily updated by the server, communicated via 
+ * GameLogic::socketIOEvent and GameLogic::updateGameState. Then, the
+ * game acts upon the current state through the GameLogic::loop function.
+ */
 
 class GameLogic {
 
@@ -22,7 +30,7 @@ public:
   GameLogic &operator=(const GameLogic &) = delete;
 
   GameLogic(WiFiMulti &wifi, const char *host, const int port)
-    : gameStatus(DISCONNECTED), wifiMulti(wifi), socketIO(), host(host), port(port) {}
+    : gameStatus(DISCONNECTED), wifiMulti(wifi), socketIO(), host(host), port(port), timeNextMessageIsAllowed(0) {}
 
 
   void setGameStatus(GameStatus gameStatus) {
@@ -34,8 +42,15 @@ public:
   }
 
   void loop() {
-    this->socketIO.loop();
-    if (this->gameStatus == WAITING_TO_PLAY) {
+    this->socketIO.loop();  // handle recieved events
+
+    if (millis() < this->timeNextMessageIsAllowed) {
+      return;
+    }
+
+    // send events:
+
+    if (this->gameStatus == WAITING_FOR_ROOM) {
       tryJoinGame();
     }
   }
@@ -58,6 +73,7 @@ private:
 
 
   void tryJoinGame() {
+    // TODO: handle these better
 #define GAME_USERNAME "\"ESP32\""
 #define ROOM_CODE "\"621639\""
 
@@ -67,8 +83,17 @@ private:
     this->socketIO.send(sIOtype_EVENT, output, strlen(output));
   }
 
-  void handleEvent(DynamicJsonDocument &doc) {
+  void updateGameState(DynamicJsonDocument &document) {
+    String eventName = document[0];
+    if (eventName == "game:errorMessage") {
+      if (this->gameStatus == WAITING_FOR_ROOM) {
+        this->timeNextMessageIsAllowed = millis() + SHORT_TIMEOUT_MS;
+      }
+    } else if (eventName == "game:successJoin") {
+      this->gameStatus = WAITING_TO_START;
+    }
   }
+
 
   // TODO: move to cpp
   void socketIOEvent(socketIOmessageType_t type, uint8_t *payload, size_t length) {
@@ -79,7 +104,7 @@ private:
         break;
       case sIOtype_CONNECT:
         USE_SERIAL.printf("[IOc] Connected to url: %s\n", payload);
-        setGameStatus(WAITING_TO_PLAY);
+        setGameStatus(WAITING_FOR_ROOM);
         // join default namespace (no auto join in Socket.IO V3)
         this->socketIO.send(sIOtype_CONNECT, "/");
         break;
@@ -102,6 +127,7 @@ private:
 
           String eventName = doc[0];
           USE_SERIAL.printf("[IOc] event name: %s\n", eventName.c_str());
+          updateGameState(doc);
 
           // Message Includes a ID for a ACK (callback)
           if (id) {  // https://socket.io/docs/v4/socket-io-protocol/#acknowledgement
@@ -138,11 +164,11 @@ private:
     }
   }
 
-
-
   const char *host;
   const int port;
   GameStatus gameStatus;
   SocketIOclient socketIO;
   WiFiMulti &wifiMulti;
+  unsigned long timeNextMessageIsAllowed;
+  const unsigned long SHORT_TIMEOUT_MS = 5000;  // in miliseconds
 };
