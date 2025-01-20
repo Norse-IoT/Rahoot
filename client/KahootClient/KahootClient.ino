@@ -1,23 +1,9 @@
-/*
- * WebSocketClientSocketIOack.ino
- *
- *  Created on: 20.07.2019
- *
- */
-
-#include <Arduino.h>
-
 #include "secrets.h"
 #define USE_SERIAL Serial
 
 #include "GameLogic.h"
 
-#include <WiFi.h>
 #include <WiFiMulti.h>
-#include <WiFiClientSecure.h>
-
-#include <ArduinoJson.h>
-
 
 WiFiMulti WiFiMulti;
 
@@ -25,10 +11,6 @@ GameLogic game(WiFiMulti, "192.168.4.170", 5505);  // represent game state
 
 void setup() {
   USE_SERIAL.begin(115200);
-
-  USE_SERIAL.println();
-  USE_SERIAL.println("SETUP BEGIN");
-  USE_SERIAL.println();
 
   while (millis() < 5000) {
     USE_SERIAL.print(".");
@@ -50,7 +32,7 @@ void setup() {
 
   String ip = WiFi.localIP().toString();
   USE_SERIAL.printf("[SETUP] WiFi Connected %s\n", ip.c_str());
-
+  game.setGameStatus(WAITING_TO_PLAY);
   game.start();
 }
 

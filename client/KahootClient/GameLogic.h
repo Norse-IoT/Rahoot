@@ -7,10 +7,10 @@
 #include <WebSocketsClient.h>
 #include <SocketIOclient.h>
 
-
 enum GameStatus {
-  WAITING_TO_START,
-  ACTIVE,
+  DISCONNECTED,
+  WAITING_TO_PLAY,
+  PLAYING,
 };
 
 
@@ -22,7 +22,7 @@ public:
   GameLogic &operator=(const GameLogic &) = delete;
 
   GameLogic(WiFiMulti &wifi, const char *host, const int port)
-    : gameStatus(WAITING_TO_START), wifiMulti(wifi), socketIO(), host(host), port(port) {}
+    : gameStatus(DISCONNECTED), wifiMulti(wifi), socketIO(), host(host), port(port) {}
 
 
   void setGameStatus(GameStatus gameStatus) {
@@ -35,6 +35,9 @@ public:
 
   void loop() {
     this->socketIO.loop();
+    if (this->gameStatus == WAITING_TO_PLAY) {
+      tryJoinGame();
+    }
   }
 
   GameStatus getGameStatus() {
@@ -44,7 +47,6 @@ public:
 private:
 
   void connectToServer() {
-
     // server address, port and URL
     this->socketIO.begin(this->host, this->port, "/socket.io/?EIO=4");
 
@@ -55,15 +57,29 @@ private:
   }
 
 
+  void tryJoinGame() {
+#define GAME_USERNAME "\"ESP32\""
+#define ROOM_CODE "\"621639\""
+
+    const char *output = "[\"player:join\", { \"username\":" GAME_USERNAME ", \"room\": " ROOM_CODE "}]";
+
+    // Send event
+    this->socketIO.send(sIOtype_EVENT, output, strlen(output));
+  }
+
+  void handleEvent(DynamicJsonDocument &doc) {
+  }
+
   // TODO: move to cpp
   void socketIOEvent(socketIOmessageType_t type, uint8_t *payload, size_t length) {
     switch (type) {
       case sIOtype_DISCONNECT:
         USE_SERIAL.printf("[IOc] Disconnected!\n");
+        setGameStatus(DISCONNECTED);
         break;
       case sIOtype_CONNECT:
         USE_SERIAL.printf("[IOc] Connected to url: %s\n", payload);
-
+        setGameStatus(WAITING_TO_PLAY);
         // join default namespace (no auto join in Socket.IO V3)
         this->socketIO.send(sIOtype_CONNECT, "/");
         break;
@@ -75,7 +91,8 @@ private:
           if (id) {
             payload = (uint8_t *)sptr;
           }
-          DynamicJsonDocument doc(1024);
+          USE_SERIAL.printf("[IOc] recieved payload: %s\n", payload);
+          DynamicJsonDocument doc(2048);
           DeserializationError error = deserializeJson(doc, payload, length);
           if (error) {
             USE_SERIAL.print(F("deserializeJson() failed: "));
@@ -87,7 +104,7 @@ private:
           USE_SERIAL.printf("[IOc] event name: %s\n", eventName.c_str());
 
           // Message Includes a ID for a ACK (callback)
-          if (id) {
+          if (id) {  // https://socket.io/docs/v4/socket-io-protocol/#acknowledgement
             // create JSON message for Socket.IO (ack)
             DynamicJsonDocument docOut(1024);
             JsonArray array = docOut.to<JsonArray>();
