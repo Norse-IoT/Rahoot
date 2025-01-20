@@ -44,9 +44,13 @@ public:
   GameLogic(WiFiMulti &wifi, const char *host, const int port)
     : gameStatus(DISCONNECTED), wifiMulti(wifi), socketIO(), host(host), port(port), timeNextMessageIsAllowed(0) {}
 
-
+  // TODO: do we need getters/setters?
   void setGameStatus(GameStatus gameStatus) {
     this->gameStatus = gameStatus;
+  }
+
+  GameStatus getGameStatus() {
+    return this->gameStatus;
   }
 
   void start() {
@@ -67,8 +71,28 @@ public:
     }
   }
 
-  GameStatus getGameStatus() {
-    return this->gameStatus;
+  void trySubmitAnswer(uint8_t answerChoice) {
+    if (answerChoice > 3) {
+      USE_SERIAL.println("invalid answer choice");
+      return;  // invalid input
+    }
+
+    if (this->gameStatus != PLAYING) {
+      USE_SERIAL.printf("chose %d but gameStatus is not PLAYING\n", answerChoice);
+      return;  // can only submit while playing
+    }
+
+    DynamicJsonDocument payload(1024);
+    JsonArray array = payload.to<JsonArray>();
+    array.add("player:selectedAnswer");
+    array.add(answerChoice);
+
+    // JSON to String (serializion)
+    String output;
+    serializeJson(payload, output);
+
+    // Send event
+    this->socketIO.sendEVENT(output);
   }
 
 private:
@@ -136,7 +160,7 @@ private:
             payload = (uint8_t *)sptr;
           }
           USE_SERIAL.printf("[IOc] recieved payload: %s\n", payload);
-          DynamicJsonDocument doc(2048);
+          DynamicJsonDocument doc(1024);
           DeserializationError error = deserializeJson(doc, payload, length);
           if (error) {
             USE_SERIAL.print(F("deserializeJson() failed: "));
