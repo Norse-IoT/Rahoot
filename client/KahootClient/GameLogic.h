@@ -8,9 +8,22 @@
 #include <SocketIOclient.h>
 
 enum GameStatus {
+  /**
+   * Likely connected to WiFi, disconnected from Socket.IO
+   */
   DISCONNECTED,
+  /**
+   * Connected to Socket.IO, but the room has not started
+   */
   WAITING_FOR_ROOM,
+  /**
+   * We've joined the room, and we're waiting for the 
+   * game to start.
+   */
   WAITING_TO_START,
+  /**
+   * We're playing the game.
+   */
   PLAYING,
 };
 
@@ -21,7 +34,6 @@ enum GameStatus {
  * GameLogic::socketIOEvent and GameLogic::updateGameState. Then, the
  * game acts upon the current state through the GameLogic::loop function.
  */
-
 class GameLogic {
 
 public:
@@ -83,6 +95,10 @@ private:
     this->socketIO.send(sIOtype_EVENT, output, strlen(output));
   }
 
+  /**
+   * This updates the game state to match the server state.
+   * Note: This only uses the event name at the moment. 
+   */
   void updateGameState(DynamicJsonDocument &document) {
     String eventName = document[0];
     if (eventName == "game:errorMessage") {
@@ -91,9 +107,12 @@ private:
       }
     } else if (eventName == "game:successJoin") {
       this->gameStatus = WAITING_TO_START;
+    } else if (eventName == "game:reset") {
+      this->gameStatus = WAITING_FOR_ROOM;
+    } else if (eventName == "game:status" || eventName == "game:cooldown") {
+      this->gameStatus = PLAYING;
     }
   }
-
 
   // TODO: move to cpp
   void socketIOEvent(socketIOmessageType_t type, uint8_t *payload, size_t length) {
