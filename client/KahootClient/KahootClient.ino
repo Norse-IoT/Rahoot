@@ -3,13 +3,14 @@
 
 #include "GameLogic.h"
 #include <AceButton.h>  // by Brian T. Park (v. 1.10.1 installed)
+
 using namespace ace_button;
 
 #include <WiFiMulti.h>
 
 WiFiMulti WiFiMulti;
 
-GameLogic game(WiFiMulti, "192.168.4.170", 5505);  // represent game state
+GameLogic game(WiFiMulti, "10.0.1.66", 5505, "ESP32", "621639");  // represent game state
 
 AceButton buttons[] = { AceButton(32), AceButton(33), AceButton(23), AceButton(22) };
 
