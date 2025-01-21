@@ -84,8 +84,18 @@ void GameLogic::updateGameState(DynamicJsonDocument &document) {
     this->gameStatus = WAITING_TO_START;
   } else if (eventName == "game:reset") {
     this->gameStatus = WAITING_FOR_ROOM;
-  } else if (eventName == "game:status" || eventName == "game:cooldown") {
-    this->gameStatus = PLAYING;
+  } else if (eventName == "game:status") {
+    String name = document[1]["name"];
+    USE_SERIAL.printf("Name: %s\n", name);
+    if (name == "SELECT_ANSWER") {
+      this->gameStatus = PLAYING;
+    } else if (name == "WAIT" || name == "SHOW_QUESTION" || name == "SHOW_PREPARED") {
+      this->gameStatus = PAUSED;
+    } else if (name == "SHOW_RESULT") {
+      bool correct = document[1]["data"]["correct"];
+      USE_SERIAL.printf("Correct: %d\n", correct);
+      this->gameStatus = PAUSED;
+    }
   }
 }
 
