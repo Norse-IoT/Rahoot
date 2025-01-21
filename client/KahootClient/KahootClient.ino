@@ -1,12 +1,9 @@
+#include <WiFiMulti.h>
+#include <AceButton.h>  // by Brian T. Park (v. 1.10.1 installed)
+using namespace ace_button;
 #include "secrets.h"
 #define USE_SERIAL Serial
-
 #include "GameLogic.h"
-#include <AceButton.h>  // by Brian T. Park (v. 1.10.1 installed)
-
-using namespace ace_button;
-
-#include <WiFiMulti.h>
 
 WiFiMulti WiFiMulti;
 
@@ -17,11 +14,11 @@ AceButton buttons[] = { AceButton(32), AceButton(33), AceButton(23), AceButton(2
 void handleEvent(AceButton*, uint8_t, uint8_t);
 
 // new pins:
-// Buzzer pin: 25
-// Top right: 32
-// Top left: 33
-// Bottom Left - Pin 36
-// Bottom Right - Pin 39
+// Buzzer pin: Pin 25
+// Top right: Pin 33
+// Top left: Pin 32
+// Bottom Left: Pin 22
+// Bottom Right: Pin 23
 
 void setup() {
   USE_SERIAL.begin(115200);
