@@ -49,6 +49,7 @@ void GameLogic::trySubmitAnswer(uint8_t answerChoice) {
 
   // Send event
   this->socketIO.sendEVENT(output);
+  this->onSubmitAnswer();
 }
 
 void GameLogic::connectToServer() {
@@ -80,21 +81,31 @@ void GameLogic::updateGameState(DynamicJsonDocument &document) {
     if (this->gameStatus == WAITING_FOR_ROOM) {
       this->timeNextMessageIsAllowed = millis() + MEDIUM_TIMEOUT_MS;
     }
+    this->onError();
   } else if (eventName == "game:successJoin") {
     this->gameStatus = WAITING_TO_START;
+    this->onJoinGame();
   } else if (eventName == "game:reset") {
     this->gameStatus = WAITING_FOR_ROOM;
+    this->onError();
   } else if (eventName == "game:status") {
     String name = document[1]["name"];
     USE_SERIAL.printf("Name: %s\n", name);
     if (name == "SELECT_ANSWER") {
       this->gameStatus = PLAYING;
+      this->onPlaying();
     } else if (name == "WAIT" || name == "SHOW_QUESTION" || name == "SHOW_PREPARED") {
       this->gameStatus = PAUSED;
+      this->onPaused();
     } else if (name == "SHOW_RESULT") {
       bool correct = document[1]["data"]["correct"];
-      USE_SERIAL.printf("Correct: %d\n", correct);
+      if (correct) {
+        this->onCorrect();
+      } else {
+        this->onIncorrect();
+      }
       this->gameStatus = PAUSED;
+      this->onPaused();
     }
   }
 }
@@ -103,10 +114,12 @@ void GameLogic::socketIOEvent(socketIOmessageType_t type, uint8_t *payload, size
   switch (type) {
     case sIOtype_DISCONNECT:
       USE_SERIAL.printf("[IOc] Disconnected!\n");
+      this->onError();
       setGameStatus(DISCONNECTED);
       break;
     case sIOtype_CONNECT:
       USE_SERIAL.printf("[IOc] Connected to url: %s\n", payload);
+      this->onJoinServer();
       setGameStatus(WAITING_FOR_ROOM);
       // join default namespace (no auto join in Socket.IO V3)
       this->socketIO.send(sIOtype_CONNECT, "/");
@@ -156,6 +169,7 @@ void GameLogic::socketIOEvent(socketIOmessageType_t type, uint8_t *payload, size
       USE_SERIAL.printf("[IOc] get ack: %u\n", length);
       break;
     case sIOtype_ERROR:
+      this->onError();
       USE_SERIAL.printf("[IOc] get error: %u\n", length);
       break;
     case sIOtype_BINARY_EVENT:
