@@ -7,7 +7,7 @@ using namespace ace_button;
 
 WiFiMulti WiFiMulti;
 
-GameLogic game(WiFiMulti, "10.0.1.66", 5505, "ESP32", "621639");  // represent game state
+GameLogic game(WiFiMulti, "192.168.0.11", 5505, "ESP32", "621639");  // represent game state
 
 AceButton buttons[] = { AceButton(32), AceButton(33), AceButton(23), AceButton(22) };
 
@@ -25,9 +25,9 @@ void badBeep() {
 
 void errorBeep() {
   tone(buzzerPin, 150, 100);
-  delay(100);
+  delay(200);
   tone(buzzerPin, 150, 100);
-  delay(100);
+  delay(200);
   tone(buzzerPin, 150, 100);
 }
 
@@ -58,11 +58,13 @@ void setup() {
   USE_SERIAL.begin(115200);
 
   // set up buttons
+  pinMode(buzzerPin, OUTPUT);
   pinMode(LED_BUILTIN, OUTPUT);
   for (auto& button : buttons) {
     pinMode(button.getPin(), INPUT_PULLUP);
     button.setEventHandler(handleEvent);
   }
+  basicBeep();
 
   for (uint8_t t = 4; t > 0; t--) {
     USE_SERIAL.printf("[SETUP] BOOT WAIT %d...\n", t);
