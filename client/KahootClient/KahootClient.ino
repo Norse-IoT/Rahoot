@@ -11,6 +11,40 @@ GameLogic game(WiFiMulti, "10.0.1.66", 5505, "ESP32", "621639");  // represent g
 
 AceButton buttons[] = { AceButton(32), AceButton(33), AceButton(23), AceButton(22) };
 
+const int buzzerPin = 25;
+
+void goodBeep() {
+  tone(buzzerPin, 988, 200);
+  tone(buzzerPin, 1319, 200);
+}
+
+void badBeep() {
+  tone(buzzerPin, 800, 150);
+  tone(buzzerPin, 150, 150);
+}
+
+void errorBeep() {
+  tone(buzzerPin, 150, 100);
+  delay(100);
+  tone(buzzerPin, 150, 100);
+  delay(100);
+  tone(buzzerPin, 150, 100);
+}
+
+void triumph() {
+  tone(buzzerPin, 500, 200);
+  delay(100);
+  tone(buzzerPin, 900, 100);
+  delay(100);
+  tone(buzzerPin, 600, 100);
+  tone(buzzerPin, 800, 100);
+  tone(buzzerPin, 1000, 100);
+}
+
+void basicBeep() {
+  tone(buzzerPin, 700, 200);
+}
+
 void handleEvent(AceButton*, uint8_t, uint8_t);
 
 // new pins:
@@ -50,6 +84,14 @@ void setup() {
 
   String ip = WiFi.localIP().toString();
   USE_SERIAL.printf("[SETUP] WiFi Connected %s\n", ip.c_str());
+  game.setOnSubmitAnswer(basicBeep);
+  game.setOnError(errorBeep);
+  game.setOnJoinGame(triumph);
+  game.setOnCorrect(goodBeep);
+  game.setOnIncorrect(badBeep);
+  game.setOnJoinServer(triumph);
+  // game.setOnPlaying();
+  // game.setOnPaused();
   game.start();
 }
 
