@@ -64,11 +64,6 @@ void setup() {
     button.setEventHandler(handleEvent);
   }
 
-  while (millis() < 5000) {
-    USE_SERIAL.print(".");
-  }
-  USE_SERIAL.println();
-
   for (uint8_t t = 4; t > 0; t--) {
     USE_SERIAL.printf("[SETUP] BOOT WAIT %d...\n", t);
     USE_SERIAL.flush();
