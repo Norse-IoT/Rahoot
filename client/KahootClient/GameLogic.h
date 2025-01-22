@@ -67,30 +67,14 @@ public:
 
   void trySubmitAnswer(uint8_t answerChoice);
 
-  void setOnSubmitAnswer(EventListener func) {
-    this->onSubmitAnswer = func;
-  }
-  void setOnError(EventListener func) {
-    this->onError = func;
-  }
-  void setOnJoinGame(EventListener func) {
-    this->onJoinGame = func;
-  }
-  void setOnCorrect(EventListener func) {
-    this->onCorrect = func;
-  }
-  void setOnIncorrect(EventListener func) {
-    this->onIncorrect = func;
-  }
-  void setOnJoinServer(EventListener func) {
-    this->onJoinServer = func;
-  }
-  void setOnPlaying(EventListener func) {
-    this->onPlaying = func;
-  }
-  void setOnPaused(EventListener func) {
-    this->onPaused = func;
-  }
+  void setOnSubmitAnswer(EventListener func);
+  void setOnError(EventListener func);
+  void setOnJoinGame(EventListener func);
+  void setOnCorrect(EventListener func);
+  void setOnIncorrect(EventListener func);
+  void setOnJoinServer(EventListener func);
+  void setOnPlaying(EventListener func);
+  void setOnPaused(EventListener func);
 
 private:
 

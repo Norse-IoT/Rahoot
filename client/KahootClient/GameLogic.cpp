@@ -180,3 +180,29 @@ void GameLogic::socketIOEvent(socketIOmessageType_t type, uint8_t *payload, size
       break;
   }
 }
+
+void GameLogic::setOnSubmitAnswer(EventListener func) {
+  this->onSubmitAnswer = func;
+}
+void GameLogic::setOnError(EventListener func) {
+  this->onError = func;
+}
+void GameLogic::setOnJoinGame(EventListener func) {
+  this->onJoinGame = func;
+}
+void GameLogic::setOnCorrect(EventListener func) {
+  this->onCorrect = func;
+}
+void GameLogic::setOnIncorrect(EventListener func) {
+  this->onIncorrect = func;
+}
+void GameLogic::setOnJoinServer(EventListener func) {
+  this->onJoinServer = func;
+}
+void GameLogic::setOnPlaying(EventListener func) {
+  this->onPlaying = func;
+}
+void GameLogic::setOnPaused(EventListener func) {
+  this->onPaused = func;
+}
+
