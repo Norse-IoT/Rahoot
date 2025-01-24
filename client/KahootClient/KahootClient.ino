@@ -115,7 +115,6 @@ inline uint8_t convertPinNumberToAnswerNumber(uint8_t pinNumber) {
 }
 
 void handleEvent(AceButton* button, uint8_t eventType, uint8_t buttonState) {
-  // TODO: when button is pressed, then send an event to the server with the Answer Number.
   Serial.printf("Pin %d = %d, eventType = %d; millis=%lu\n", button->getPin(), buttonState, eventType, millis());
   switch (eventType) {
     case AceButton::kEventPressed:
