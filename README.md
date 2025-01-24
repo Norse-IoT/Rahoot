@@ -6,22 +6,22 @@
 
 ## TODO:
 
-- [ ] Make the system work with esp-32 clients
+- [x] Make the system work with esp-32 clients
   - [x] ~~Remove~~ Hardcode the PIN system
-  - [ ] Capture and document the flow of Websocket stuff, and see what we specifically need to re-create
-- [ ] ESP-32 Client Software
-  - [ ] When it turns on, it tries to connect to the web server
-    - [ ] It then creates/signs in to with a predefined name
-    - [ ] Every ESP32 has a predefined name
-      - [ ] We should put these names as labels on bags, and have people scramble at the beginning to pick the names they like the most
-  - [ ] When a button is pushed, submit a websocket instance with a player id.
-  - [ ] We need to submit an event like this from the esp32:
+  - [x] Capture and document the flow of Websocket stuff, and see what we specifically need to re-create
+- [x] ESP-32 Client Software
+  - [x] When it turns on, it tries to connect to the web server
+    - [x] It then creates/signs in to with a predefined name
+    - [x] Every ESP32 has a predefined name
+      - [x] We should put these names as labels on bags, and have people scramble at the beginning to pick the names they like the most
+  - [x] When a button is pushed, submit a websocket instance with a player id.
+  - [x] We need to submit an event like this from the esp32:
     - ```
       socket.on("player:selectedAnswer", (answerKey) =>
         Player.selectedAnswer(gameState, io, socket, answerKey),
       )
       ```
-  - [ ] We need to emit something like this, where `answer` is a number '0-3'
+  - [x] We need to emit something like this, where `answer` is a number '0-3'
     - ```
         socket.emit("player:selectedAnswer", answer)
       ```
