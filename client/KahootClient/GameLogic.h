@@ -83,7 +83,6 @@ private:
   void tryJoinGame();
   /**
    * This updates the game state to match the server state.
-   * Note: This only uses the event name at the moment.
    */
   void updateGameState(DynamicJsonDocument &document);
 
