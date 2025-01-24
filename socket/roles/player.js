@@ -60,11 +60,6 @@ const Player = {
   },
 
   selectedAnswer: (game, io, socket, answerKey) => {
-    console.log({
-      game: JSON.stringify(game),
-      socket: socket,
-      answerKey: JSON.stringify(answerKey)
-    })
     const player = game.players.find((player) => player.id === socket.id)
     const question = game.questions[game.currentQuestion]
 
