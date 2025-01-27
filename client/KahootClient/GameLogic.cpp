@@ -85,7 +85,7 @@ void GameLogic::updateGameState(DynamicJsonDocument &document) {
   } else if (eventName == "game:successJoin") {
     this->gameStatus = WAITING_TO_START;
     this->onJoinGame();
-  } else if (eventName == "game:reset") {
+  } else if (eventName == "game:reset" || eventName == "game:kick") {
     this->gameStatus = WAITING_FOR_ROOM;
     this->onError();
   } else if (eventName == "game:status") {

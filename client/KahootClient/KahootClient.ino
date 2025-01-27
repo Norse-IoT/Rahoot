@@ -7,7 +7,7 @@ using namespace ace_button;
 
 WiFiMulti WiFiMulti;
 
-GameLogic game(WiFiMulti, "192.168.0.11", 5505, "ESP32", "621639");  // represent game state
+GameLogic game(WiFiMulti, "192.168.0.4", 5505, "ADMIN", "621639");  // represent game state
 
 AceButton buttons[] = { AceButton(32), AceButton(33), AceButton(23), AceButton(22) };
 
@@ -74,8 +74,9 @@ void setup() {
 
   WiFiMulti.addAP(SSID, WIFI_PASSWORD);
 
-  //WiFi.disconnect();
+  USE_SERIAL.println("Connecting to WiFi");
   while (WiFiMulti.run() != WL_CONNECTED) {
+    USE_SERIAL.print(".");
     delay(100);
   }
 
