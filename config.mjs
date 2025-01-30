@@ -143,7 +143,7 @@ const QUIZ_CONFIG = {
 				"University of Cincinnati",
 				"Xavier University",
 				"Northern Kentucky University",
-				"Thomas More University"",
+				"Thomas More University",
 			],
 			solution: 2,
 			cooldown: 5,
