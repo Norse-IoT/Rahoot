@@ -1,4 +1,4 @@
-export const WEBSOCKET_PUBLIC_URL = "http://localhost:5505/"
+export const WEBSOCKET_PUBLIC_URL = "http://192.168.0.4:5505/"
 export const WEBSOCKET_SERVER_PORT = 5505
 
 const QUIZ_CONFIG = {
@@ -150,7 +150,7 @@ const QUIZ_CONFIG = {
 			time: 15,
 		},
 		{
-			question: "What McDonalds dish was originally a Cincinnati exclusive?",
+			question: "What McDonald's dish was originally a Cincinnati exclusive?",
 			answers: [
 				"Filet-o-Fish",
 				"McCrispy",
